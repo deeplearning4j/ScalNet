@@ -54,6 +54,7 @@ object IrisCSVExample extends App {
   private val numOut = 3
   private val numEpochs = 300
   private val scoreFrequency = 5
+  private val momentum: Double = 0.9
 
   log.info("Reading data set....")
   val recordReader = new CSVRecordReader(numLinesToSkip, delimiter)
@@ -74,7 +75,7 @@ object IrisCSVExample extends App {
   model.add(Dense(numDenseOut, activation = "relu", regularizer = L2(learningRate * decay)))
   model.add(Dense(numDenseOut, activation = "relu", regularizer = L2(learningRate * decay)))
   model.add(Dense(numOut, activation = "softmax", regularizer = L2(learningRate * decay)))
-  model.compile(lossFunction = LossFunction.MCXENT, optimizer = SGD(learningRate))
+  model.compile(lossFunction = LossFunction.MCXENT, optimizer = SGD(learningRate, momentum = momentum, nesterov = true))
 
   log.info("Train model....")
   model.fit(iter = training_data, nbEpoch = numEpochs, listeners = List(new ScoreIterationListener(scoreFrequency)))
