@@ -64,6 +64,7 @@ abstract class Model {
         sgd match {
           case opt if opt.nesterov =>
             builder = builder.updater(Updater.NESTEROVS).momentum(opt.momentum)
+          case _ =>
         }
       case _ =>
         builder = builder.optimizationAlgo(optimizer.optimizationAlgorithm)
