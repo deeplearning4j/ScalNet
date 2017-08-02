@@ -61,9 +61,8 @@ abstract class Model {
       case sgd: SGD =>
         builder = builder.optimizationAlgo(sgd.optimizationAlgorithm)
           .learningRate(sgd.lr)
-        sgd match {
-          case opt if opt.nesterov =>
-            builder = builder.updater(Updater.NESTEROVS).momentum(opt.momentum)
+        if(sgd.nesterov) {
+            builder = builder.updater(Updater.NESTEROVS).momentum(sgd.momentum)
         }
       case _ =>
         builder = builder.optimizationAlgo(optimizer.optimizationAlgorithm)
