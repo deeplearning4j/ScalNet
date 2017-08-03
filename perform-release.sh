@@ -9,6 +9,9 @@ fi
 RELEASE_VERSION=$1
 SNAPSHOT_VERSION=$2
 STAGING_REPOSITORY=${3:-}
+if [[ -z ${SKIP_BUILD:-} ]]; then
+    SKIP_BUILD=0
+fi
 
 if [[ "$2" != *-SNAPSHOT ]]
 then
@@ -32,14 +35,17 @@ sed -i "s/<dl4j.version>.*<\/dl4j.version>/<dl4j.version>$RELEASE_VERSION<\/dl4j
 sed -i "s/<version>.*-SNAPSHOT<\/version>/<version>$RELEASE_VERSION<\/version>/" pom.xml
 mvn versions:set -DallowSnapshots=false -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION
 
-source change-scala-versions.sh 2.10
-mvn clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip
-source change-scala-versions.sh 2.11
-mvn clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip
+if [[ "${SKIP_BUILD}" == "0" ]]; then
+    source change-scala-versions.sh 2.10
+    mvn clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip
+    source change-scala-versions.sh 2.11
+    mvn clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip
 
-source change-scala-versions.sh 2.11
+    source change-scala-versions.sh 2.11
+fi
 git commit -a -m "Update to version $RELEASE_VERSION"
 git tag -a -m "scalnet-$RELEASE_VERSION" "scalnet-$RELEASE_VERSION"
+git tag -a -f -m "scalnet-$RELEASE_VERSION" "latest_release"
 
 sed -i "s/<nd4j.version>.*<\/nd4j.version>/<nd4j.version>$SNAPSHOT_VERSION<\/nd4j.version>/" pom.xml
 sed -i "s/<datavec.version>.*<\/datavec.version>/<datavec.version>$SNAPSHOT_VERSION<\/datavec.version>/" pom.xml
