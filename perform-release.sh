@@ -9,9 +9,7 @@ fi
 RELEASE_VERSION=$1
 SNAPSHOT_VERSION=$2
 STAGING_REPOSITORY=${3:-}
-if [[ -z ${SKIP_BUILD:-} ]]; then
-    SKIP_BUILD=0
-fi
+SKIP_BUILD=${SKIP_BUILD:-0}
 
 if [[ "$2" != *-SNAPSHOT ]]
 then
