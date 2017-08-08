@@ -22,7 +22,7 @@ import org.deeplearning4j.nn.conf.{NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.optimize.api.IterationListener
 import org.deeplearning4j.scalnet.layers.{Node, OutputLayer}
-import org.deeplearning4j.scalnet.optimizers.{Optimizer, SGD}
+import org.deeplearning4j.scalnet.optimizers._
 import org.deeplearning4j.scalnet.utils.Implicits._
 
 import org.nd4j.linalg.api.ndarray.INDArray
@@ -57,17 +57,25 @@ abstract class Model {
     if (seed != 0) {
       builder = builder.seed(seed)
     }
+    if (optimizer == null) {
+      throw new IllegalArgumentException("Optimizer can not be null .")
+    }
+    builder = builder.optimizationAlgo(optimizer.optimizationAlgorithm).learningRate(optimizer.lr)
     optimizer match {
       case sgd: SGD =>
-        builder = builder.optimizationAlgo(sgd.optimizationAlgorithm)
-          .learningRate(sgd.lr)
-        sgd match {
-          case opt if opt.nesterov =>
-            builder = builder.updater(Updater.NESTEROVS).momentum(opt.momentum)
-        }
+        builder = builder.updater(Updater.SGD)
+      case nesterovs: NESTEROVS =>
+        builder = builder.updater(Updater.NESTEROVS).momentum(nesterovs.momentum)
+      case rmsprop: RMSPROP =>
+        builder = builder.updater(Updater.RMSPROP).epsilon(rmsprop.epsilon).rmsDecay(rmsprop.rmsdecay)
+      case adam: ADAM =>
+        builder = builder.updater(Updater.ADAM).epsilon(adam.epsilon).adamMeanDecay(adam.meandecay).adamVarDecay(adam.vardecay)
+      case adadelta: ADADELTA =>
+        builder = builder.updater(Updater.ADADELTA).rho(adadelta.rho).epsilon(adadelta.epsilon)
+      case adagrad: ADAGRAD =>
+        builder = builder.updater(Updater.ADAGRAD).epsilon(adagrad.epsilon)
+      case NONE =>
       case _ =>
-        builder = builder.optimizationAlgo(optimizer.optimizationAlgorithm)
-          .learningRate(optimizer.asInstanceOf[SGD].lr)
     }
     builder
   }

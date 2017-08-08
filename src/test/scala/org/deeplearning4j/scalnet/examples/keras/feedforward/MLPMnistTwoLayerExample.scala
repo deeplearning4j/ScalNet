@@ -25,7 +25,7 @@ import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.deeplearning4j.scalnet.layers.Dense
 import org.deeplearning4j.scalnet.regularizers.L2
 import org.deeplearning4j.scalnet.models.Sequential
-import org.deeplearning4j.scalnet.optimizers.SGD
+import org.deeplearning4j.scalnet.optimizers.{NESTEROVS, SGD}
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.api.DataSet
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
@@ -61,7 +61,7 @@ object MLPMnistTwoLayerExample extends App {
   model.add(Dense(nOut = outputNum, weightInit = WeightInit.XAVIER, activation = "softmax",
     regularizer = L2(learningRate * 0.005)))
   model.compile(lossFunction = LossFunction.NEGATIVELOGLIKELIHOOD,
-    optimizer = SGD(learningRate, momentum = momentum, nesterov = true))
+    optimizer = NESTEROVS(learningRate, momentum = momentum))
 
   log.info("Train model....")
   model.fit(mnistTrain, nbEpoch = numEpochs, List(new ScoreIterationListener(1000)))
