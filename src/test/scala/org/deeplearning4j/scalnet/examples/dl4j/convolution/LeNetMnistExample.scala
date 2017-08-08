@@ -27,7 +27,7 @@ import org.deeplearning4j.scalnet.layers.Dense
 import org.deeplearning4j.scalnet.layers.convolutional.Convolution2D
 import org.deeplearning4j.scalnet.layers.pooling.MaxPooling2D
 import org.deeplearning4j.scalnet.models.NeuralNet
-import org.deeplearning4j.scalnet.optimizers.SGD
+import org.deeplearning4j.scalnet.optimizers.{NESTEROVS, SGD}
 import org.deeplearning4j.scalnet.regularizers.L2
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.api.DataSet
@@ -70,7 +70,7 @@ object LeNetMnistExample extends App {
   model.add(Dense(nOut = 500, weightInit = WeightInit.XAVIER, activation = "relu", regularizer = L2(weightDecay)))
   model.add(Dense(nOut = nbOutput, weightInit = WeightInit.XAVIER, activation = "softmax"))
   model.compile(lossFunction = LossFunction.NEGATIVELOGLIKELIHOOD,
-    optimizer = SGD(learningRate, momentum = momentum, nesterov = true))
+    optimizer = NESTEROVS(learningRate, momentum = momentum))
 
   log.info("Train model....")
   model.fit(mnistTrain, nbEpoch = nbEpochs, List(new ScoreIterationListener(1)))

@@ -30,7 +30,7 @@ import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.deeplearning4j.scalnet.layers.Dense
 import org.deeplearning4j.scalnet.regularizers.L2
 import org.deeplearning4j.scalnet.models.NeuralNet
-import org.deeplearning4j.scalnet.optimizers.SGD
+import org.deeplearning4j.scalnet.optimizers.{NESTEROVS, SGD}
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
 import org.nd4j.linalg.dataset.{DataSet, SplitTestAndTrain}
@@ -75,7 +75,7 @@ object IrisCSVExample extends App {
   model.add(Dense(numDenseOut, activation = "relu", regularizer = L2(learningRate * decay)))
   model.add(Dense(numDenseOut, activation = "relu", regularizer = L2(learningRate * decay)))
   model.add(Dense(numOut, activation = "softmax", regularizer = L2(learningRate * decay)))
-  model.compile(lossFunction = LossFunction.MCXENT, optimizer = SGD(learningRate, momentum = momentum, nesterov = true))
+  model.compile(lossFunction = LossFunction.MCXENT, optimizer = NESTEROVS(learningRate, momentum = momentum))
 
   log.info("Train model....")
   model.fit(iter = training_data, nbEpoch = numEpochs, listeners = List(new ScoreIterationListener(scoreFrequency)))
