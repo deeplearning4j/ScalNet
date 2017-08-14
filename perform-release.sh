@@ -38,6 +38,8 @@ if [[ "${SKIP_BUILD}" == "0" ]]; then
     mvn clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip
     source change-scala-versions.sh 2.11
     mvn clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip
+    source change-scala-versions.sh 2.12
+    mvn clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip
 
     source change-scala-versions.sh 2.11
 fi

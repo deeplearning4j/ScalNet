@@ -21,9 +21,7 @@
 
 set -e
 
-VALID_VERSIONS=( 2.10 2.11 )
-SCALA_210_VERSION=$(grep -F -m 1 'scala210.version' pom.xml); SCALA_210_VERSION="${SCALA_210_VERSION#*>}"; SCALA_210_VERSION="${SCALA_210_VERSION%<*}";
-SCALA_211_VERSION=$(grep -F -m 1 'scala211.version' pom.xml); SCALA_211_VERSION="${SCALA_211_VERSION#*>}"; SCALA_211_VERSION="${SCALA_211_VERSION%<*}";
+VALID_VERSIONS=( 2.10 2.11 2.12 )
 
 usage() {
   echo "Usage: $(basename $0) [-h|--help] <scala version to be used>
@@ -38,7 +36,7 @@ if [[ ($# -ne 1) || ( $1 == "--help") ||  $1 == "-h" ]]; then
   usage
 fi
 
-TO_VERSION=$1
+TO_BINARY=$1
 
 check_scala_version() {
   for i in ${VALID_VERSIONS[*]}; do [ $i = "$1" ] && return 0; done
@@ -46,20 +44,19 @@ check_scala_version() {
   exit 1
 }
 
+check_scala_version "$TO_BINARY"
 
-check_scala_version "$TO_VERSION"
+FROM_BINARY=$(awk -F '[<>]' '/artifactId.*?scalnet_[0-9\.]+/{sub("scalnet_", ""); print $3}' pom.xml)
+FROM_BINARY_VERSION=scala${FROM_BINARY//.}.version
+FROM_VERSION=$(grep -F -m 1 "$FROM_BINARY_VERSION" pom.xml); FROM_VERSION="${FROM_VERSION#*>}"; FROM_VERSION="${FROM_VERSION%<*}";
+FROM_VERSION=$(echo $FROM_VERSION | perl -pe 's/.*?([0-9]+\.[0-9]+\.[0-9]+).*/\1/g')
 
-if [ $TO_VERSION = "2.11" ]; then
-  FROM_BINARY="_2\.10"
-  TO_BINARY="_2\.11"
-  FROM_VERSION=$SCALA_210_VERSION
-  TO_VERSION=$SCALA_211_VERSION
-else
-  FROM_BINARY="_2\.11"
-  TO_BINARY="_2\.10"
-  FROM_VERSION=$SCALA_211_VERSION
-  TO_VERSION=$SCALA_210_VERSION
-fi
+TO_BINARY_VERSION=scala${TO_BINARY//.}.version
+TO_VERSION=$(grep -F -m 1 "$TO_BINARY_VERSION" pom.xml); TO_VERSION="${TO_VERSION#*>}"; TO_VERSION="${TO_VERSION%<*}";
+TO_VERSION=$(echo $TO_VERSION | perl -pe 's/.*?([0-9]+\.[0-9]+\.[0-9]+).*/\1/g')
+
+FROM_BINARY=_$FROM_BINARY
+TO_BINARY=_$TO_BINARY
 
 sed_i() {
   sed -e "$1" "$2" > "$2.tmp" && mv "$2.tmp" "$2"

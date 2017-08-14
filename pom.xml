@@ -50,6 +50,9 @@
     <!-- Scala 2.11.x -->
     <scala211.version>2.11.8</scala211.version>
     <scala211.binary.version>2.11</scala211.binary.version>
+    <!-- Scala 2.12.x -->
+    <scala212.version>2.12.3</scala212.version>
+    <scala212.binary.version>2.12</scala212.binary.version>
 
     <scala.binary.version>2.11</scala.binary.version>
     <scala.version>2.11.8</scala.version>
