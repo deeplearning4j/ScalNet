@@ -1,9 +1,3 @@
-# IMPORTANT: THIS REPOSITORY HAS BEEN ARCHIVED AND SCALNET HAS BEEN MOVED
-ScalNet has been migrated to a sub-module of the mono-repository here: https://github.com/deeplearning4j/deeplearning4j
-
-All future development will continue at that repository, which should be used for all issues and pull requests.
-
-
 # ScalNet
 
 ScalNet is a wrapper around Deeplearning4J emulating a [Keras](https://github.com/fchollet/keras) like API for deep learning.
